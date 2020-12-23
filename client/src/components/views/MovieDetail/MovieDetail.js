@@ -3,6 +3,7 @@ import { API_URL, API_KEY , IMAGE_BASE_URL } from '../../Config';
 import MainImage from '../LandingPage/Sections/MainImage';
 import GridCards from '../commons/GridCards'; // 컴포넌트 가져오기
 import MovieInfo from './Sections/MovieInfo';
+import Favorite from './Sections/Favorite';
 import { Row } from 'antd';
 
 // rfce 로 functional component를 생성
@@ -61,6 +62,10 @@ function MovieDetail(props) {
 
             { /* Body */ }
             <div style={{ width : '85%', margin : '1rem auto' }}>
+
+                <div style= {{ display : 'flex', justifyContent : 'flex-end' }} >
+                    <Favorite        movieInfo={ Movie } movieId = {movieId}  userFrom = { localStorage.getItem('userId') }  /> 
+                </div>
 
 
                 { /* Movie Info */ }

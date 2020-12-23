@@ -55,18 +55,17 @@ function LandingPage() {
 
                 {/* Movie Grid Cards */} 
                 
-                <Row gutter={[16, 16]} /*gutter로 image마다 간격을 준다.*/ >  
+                <Row gutter={[16, 16]} /* gutter로 image마다 간격을 준다. */ >  
                     
-                    
+                
                     {Movies && Movies.map((movie, index) => ( // Movies가 있으면! 
                         <React.Fragment key={index}> 
-                            
                             <GridCards // 위에 key 값이 있어야 에러 경고 안난다.
                                 landingPage
-                                image={movie.poster_path ? // poster 있으면 =>
+                                image = {movie.poster_path ? // poster 있으면 =>
                                     `${IMAGE_BASE_URL}w500${movie.poster_path}` : null} // poster_path 없으면 null 처리
-                                movieId={movie.id} // movieId 도 props으로 준다.
-                                movieName={movie.original_title}
+                                movieId = {movie.id} // movieId 도 props으로 준다.
+                                movieName = {movie.original_title}
                             />
                         </React.Fragment>
                     ))}
