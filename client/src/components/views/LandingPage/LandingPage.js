@@ -60,6 +60,7 @@ function LandingPage() {
                     
                     {Movies && Movies.map((movie, index) => ( // Movies가 있으면! 
                         <React.Fragment key={index}> 
+                            
                             <GridCards // 위에 key 값이 있어야 에러 경고 안난다.
                                 landingPage
                                 image={movie.poster_path ? // poster 있으면 =>
