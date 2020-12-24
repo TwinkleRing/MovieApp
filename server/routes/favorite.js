@@ -4,20 +4,67 @@ const { Favorite } = require('../models/Favorite');
 
 router.post('/favoriteNumber', (req,res) => {
 
-    // ÀÌ ¿µÈ­¿¡ ¾ó¸¶³ª ÁÁ¾Æ¿ä ¼ıÀÚ°¡ ¾ó¸¶³ª µÇ´ÂÁö ¾Ë°í½Í´Ù.
+    // ì´ ì˜í™”ì— ì–¼ë§ˆë‚˜ ì¢‹ì•„ìš” ìˆ«ìê°€ ì–¼ë§ˆë‚˜ ë˜ëŠ”ì§€ ì•Œê³ ì‹¶ë‹¤.
 
-    // mongoDB¿¡¼­ favorite ¼ıÀÚ¸¦ °¡Á®¿À±â
+    // mongoDBì—ì„œ favorite ìˆ«ìë¥¼ ê°€ì ¸ì˜¤ê¸°
     Favorite.find({ "movieId" : req.body.movieId }) // 
         .exec((err , info) => {
             if (err) return res.status(400).send(err)
 
-            // ±× ´ÙÀ½¿¡ ÇÁ·ĞÆ®¿¡ ´Ù½Ã ¼ıÀÚ Á¤º¸¸¦ º¸³»ÁÖ±â
-            // movieId¿¡ ¸Â´Â Á¤º¸¸¦ Ã£¾ÒÀ¸¸é info¿¡ µé¾îÀÖ´Â Á¤º¸,  ¸¸¾à ¼¼ »ç¶÷ÀÌ ÁÁ¾Æ¿ä Çß´Ù ÀÌ·¯¸é ÀÌ ¸ğµç Á¤º¸¸¦ [1,2,3] ÀÌ·¸°Ô µ¥ÀÌÅÍ°¡ µé¾îÀÖ´Ù.
-            //  Å¬¶óÀÌ¾ğÆ®¿¡ ÀÀ´äÀ¸·Î µ¹·ÁÁØ´Ù.
+            // ê·¸ ë‹¤ìŒì— í”„ë¡ íŠ¸ì— ë‹¤ì‹œ ìˆ«ì ì •ë³´ë¥¼ ë³´ë‚´ì£¼ê¸°
+            // movieIdì— ë§ëŠ” ì •ë³´ë¥¼ ì°¾ì•˜ìœ¼ë©´ infoì— ë“¤ì–´ìˆëŠ” ì •ë³´,  ë§Œì•½ ì„¸ ì‚¬ëŒì´ ì¢‹ì•„ìš” í–ˆë‹¤ ì´ëŸ¬ë©´ ì´ ëª¨ë“  ì •ë³´ë¥¼ [1,2,3] ì´ë ‡ê²Œ ë°ì´í„°ê°€ ë“¤ì–´ìˆë‹¤.
+            //  í´ë¼ì´ì–¸íŠ¸ì— ì‘ë‹µìœ¼ë¡œ ëŒë ¤ì¤€ë‹¤.
             res.status(200).json({ success : true, favoriteNumber : info.length  } )
     })
 
 })
-// express ÇÁ·¹ÀÓ¿öÅ©¿¡¼­ Á¦°øÇÏ´Â router »ç¿ë, index.js¿¡ °æ·Î ³Ö¾îÁÖ¸é µÈ´Ù.
+
+router.post('/favorited', (req,res) => {
+
+    // ë‚´ê°€ ì´ ì˜í™”ë¥¼ Favorite ë¦¬ìŠ¤íŠ¸ì— ë„£ì—ˆëŠ”ì§€ ì •ë³´ë¥¼ DBì—ì„œ ê°€ì ¸ì˜¤ê¸°
+
+    // mongoDBì—ì„œ favorite ìˆ«ìë¥¼ ê°€ì ¸ì˜¤ê¸°
+    Favorite.find({ "movieId" : req.body.movieId , "userFrom" : req.body.userFrom }) // 
+        .exec((err , info) => {
+            if (err) return res.status(400).send(err)
+
+            // infoì— ë¹ˆ ê°’ì´ ìˆìœ¼ë©´ í•´ë‹¹ í•˜ëŠ” ì˜í™”ë¥¼ ë¦¬ìŠ¤íŠ¸ì— ë„£ì§€ ì•Šì•˜ë‹¤ëŠ” ê²ƒì´ë‹¤!
+
+            let result = false;
+
+            if(info.length !== 0 ) {
+                result = true
+            }
+            res.status(200).json({ success : true, favorited : result })
+    })
+
+})
+// express í”„ë ˆì„ì›Œí¬ì—ì„œ ì œê³µí•˜ëŠ” router ì‚¬ìš©, index.jsì— ê²½ë¡œ ë„£ì–´ì£¼ë©´ ëœë‹¤.
+
+
+
+router.post('/removeFromFavorite' , (req,res) => {
+    
+    Favorite.findOneAndDelete({ movieId : req.body.movieId , userFrom : req.body.userFrom })
+        .exec(( err, doc ) => {
+            if(err) return res.status(400).send(err)
+            res.status(200).json( {success : true, doc } )
+        })
+
+})
+
+
+router.post('/addToFavorite' , (req,res) => {
+
+    const favorite = new Favorite(req.body)
+
+    favorite.save((err, doc) => {
+        if(err) return res.status(400).send(err)
+        return res.status(200).json({ success : true })
+    })
+
+})
+    
+
 
 module.exports = router;
