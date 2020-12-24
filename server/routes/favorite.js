@@ -66,5 +66,15 @@ router.post('/addToFavorite' , (req,res) => {
 })
     
 
+router.post('/getFavoredMovie' , (req,res) => {
+    Favorite.find( { 'userFrom' : req.body.userFrom })
+        .exec((err , favorites) =>  {
+            if(err) return res.status(400).send(err)
+            return res.status(200).json({ success : true, favorites}) // 내가 좋아요 누른 영화들의 정보를 array 형태로 보낸다.
+        })
+
+    
+
+})
 
 module.exports = router;
